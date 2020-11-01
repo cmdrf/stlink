@@ -750,7 +750,7 @@ static int update_code_breakpoint(stlink_t *sl, stm32_addr_t addr, int set) {
         return(-1);
     }
 
-    if (sl->core_id == STM32F7_CORE_ID) {
+    if (sl->core_id == STM32F7_CORE_ID || sl->core_id == 0x6ba02477) {
         fpb_addr = addr;
     } else {
         fpb_addr = addr & ~0x3;
@@ -779,7 +779,7 @@ static int update_code_breakpoint(stlink_t *sl, stm32_addr_t addr, int set) {
 
     bp->addr = fpb_addr;
 
-    if (sl->core_id == STM32F7_CORE_ID) {
+    if (sl->core_id == STM32F7_CORE_ID || sl->core_id == 0x6ba02477) {
         if (set) {
             bp->type = type;
         } else {
@@ -985,7 +985,7 @@ static void init_cache (stlink_t *sl) {
     int i;
 
     // assume only F7 has a cache
-    if (sl->core_id != STM32F7_CORE_ID) { return; }
+    if (sl->core_id != STM32F7_CORE_ID && sl->core_id != 0x6ba02477) { return; }
 
     stlink_read_debug32(sl, CLIDR, &clidr);
     stlink_read_debug32(sl, CCR, &ccr);
@@ -1059,7 +1059,7 @@ static void cache_change(stm32_addr_t start, unsigned count) {
 static void cache_sync(stlink_t *sl) {
     unsigned ccr;
 
-    if (sl->core_id != STM32F7_CORE_ID) { return; }
+    if (sl->core_id != STM32F7_CORE_ID && sl->core_id != 0x6ba02477) { return; }
 
     if (!cache_modified) { return; }
 
